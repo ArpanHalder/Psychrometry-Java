@@ -41,6 +41,7 @@ public class PsycState {
 			e = Math.abs(twb2-twb);
 			twb = twb2;
 		}
+		this.Tw = twb;
 	}
 	
 	public double VapPressure(){
@@ -72,22 +73,45 @@ public class PsycState {
 		return(this.Enthalpy() - 4.18*this.MoistCont()*Tw);
 	}
 	
-	public double HumidityRatio(){
-		return(this.VapPressure()/this.SatVapPressure(Td));
+	public double Humidity(){
+		return(100 * this.VapPressure()/this.SatVapPressure(Td));
 	}
 	
 	public double DuePoint(){
 		return((Math.log(this.VapPressure()/0.6105)*237.3)/(17.27-Math.log(this.VapPressure()/0.6105)));
 	}
 	
-	// Op methods
+	public double Density(){
+		return((1+this.MoistCont())/this.SpecificVol());
+	}
+	
+	// Methods involving state change
+	
+	public void AddDryHeat(double heat){ // kJ heat per kg of da
+		double Tdb = this.Td + (heat/(1.005 + this.MoistCont()*1.883));
+		
+		//TODO: test this in Matlab
+		double twb = Td, twb2, e = 1;
+		double Pw = this.VapPressure();
+		while(e>0.001){ //Numerical solver for Wet Bulb Temp. in deg C
+			twb2 = ((Pw - (0.6105*Math.exp(17.27 * twb / (237.3+ twb)))) / (0.000644*B)) + Td ;
+			
+			e = Math.abs(twb2-twb);
+			twb = twb2;
+		}
+		this.Td = Tdb;
+		this.Tw = twb;
+	}
+	
+	// methods for testing
 	
 	public void Print(){
 		System.out.printf("Dry Bulb = %f, Wet Bulb = %f \nBarometric Pressure = %f\n",Td,Tw,B);
 		System.out.printf("\nVapor Pressure = %f", this.VapPressure());
 		System.out.printf("\nSaturated Vapor Pressure = %f", this.SatVapPressure());
-		System.out.printf("\nHumity = %f percent", this.HumidityRatio()*100);
+		System.out.printf("\nHumity = %f percent", this.Humidity());
 		System.out.printf("\nSpecific Volume = %f", this.SpecificVol());
+		System.out.printf("\nDensity = %f", this.Density());
 		System.out.printf("\nEnthalpy = %f", this.Enthalpy());
 		System.out.printf("\nSigma Heat = %f", this.SigmaHeat());
 		System.out.printf("\nMoist Content = %f", this.MoistCont());
