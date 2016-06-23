@@ -33,16 +33,61 @@ public class PsycState {
 	public void Psyc_B_Td_RH(double B, double Td, double RH){ // Unit kPa , deg C, in % 
 		this.Td = Td;
 		this.B = B;
-		double twb = Td, twb2, e = 1;
+		int iter=0;
+		double Tw = Td, move=0, k, lmd = 10;
 		double Pw = this.SatVapPressure(Td) * RH/100;
-		while(e>0.001){ //Numerical solver for Wet Bulb Temp. in deg C
-			twb2 = ((Pw - (0.6105*Math.exp(17.27 * twb / (237.3+ twb)))) / (0.000644*B)) + Td ;
-			
-			e = Math.abs(twb2-twb);
-			twb = twb2;
+		while(true){
+		    iter = iter+1; // for later advance uses
+		    
+		    k = (0.6105*Math.exp(17.27 * Tw / (237.3+ Tw)) - 0.000644*B*(Td - Tw) - Pw);
+		    if (Math.abs(k)<0.001) break;
+		    
+		    if(Tw>100 || Tw < 0){
+		        Tw = Double.NaN;
+		        break;
+		    }
+		    
+		    if(k<0){
+		        if(move<0) lmd = lmd/2;
+		        move = lmd;
+		    }else{
+		        if(move>0) lmd = lmd/2;
+		        move = -lmd;
+		    }		    
+		    Tw = Tw + move;
 		}
-		this.Tw = twb;
+		this.Tw = Tw;
 	}
+	
+	public void Psyc_B_Td_Pw(double B, double Td, double Pw){ // Unit kPa , deg C, in % 
+		this.Td = Td;
+		this.B = B;
+		int iter=0;
+		double Tw = Td, move=0, k, lmd = 10;
+		while(true){
+		    iter = iter+1; // for later advance uses
+		    
+		    k = (0.6105*Math.exp(17.27 * Tw / (237.3+ Tw)) - 0.000644*B*(Td - Tw) - Pw);
+		    if (Math.abs(k)<0.001) break;
+		    
+		    if(Tw>100 || Tw < 0){
+		        Tw = Double.NaN;
+		        break;
+		    }
+		    
+		    if(k<0){
+		        if(move<0) lmd = lmd/2;
+		        move = lmd;
+		    }else{
+		        if(move>0) lmd = lmd/2;
+		        move = -lmd;
+		    }		    
+		    Tw = Tw + move;
+		}
+		this.Tw = Tw;
+	}
+	
+	// Get data Methods
 	
 	public double VapPressure(){
 		// Gives Partial Vapor Pressure (kPa) Tdb, Twb (*C)Barpmetric_Pressure (kPa)
@@ -88,19 +133,10 @@ public class PsycState {
 	// Methods involving state change
 	
 	public void AddDryHeat(double heat){ // kJ heat per kg of da
-		double Tdb = this.Td + (heat/(1.005 + this.MoistCont()*1.883));
-		
-		//TODO: test this in Matlab
-		double twb = Td, twb2, e = 1;
 		double Pw = this.VapPressure();
-		while(e>0.001){ //Numerical solver for Wet Bulb Temp. in deg C
-			twb2 = ((Pw - (0.6105*Math.exp(17.27 * twb / (237.3+ twb)))) / (0.000644*B)) + Td ;
-			
-			e = Math.abs(twb2-twb);
-			twb = twb2;
-		}
-		this.Td = Tdb;
-		this.Tw = twb;
+		this.Td = this.Td + (heat/(1.005 + this.MoistCont()*1.883));
+				
+		this.Psyc_B_Td_Pw(B, Td, Pw);
 	}
 	
 	// methods for testing
