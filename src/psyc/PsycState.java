@@ -31,32 +31,9 @@ public class PsycState {
 	//other constructors for empty class
 	
 	public void Psyc_B_Td_RH(double B, double Td, double RH){ // Unit kPa , deg C, in % 
-		this.Td = Td;
-		this.B = B;
-		int iter=0;
-		double Tw = Td, move=0, k, lmd = 10;
+		//TODO: discuss with sir about Humidity
 		double Pw = this.SatVapPressure(Td) * RH/100;
-		while(true){
-		    iter = iter+1; // for later advance uses
-		    
-		    k = (0.6105*Math.exp(17.27 * Tw / (237.3+ Tw)) - 0.000644*B*(Td - Tw) - Pw);
-		    if (Math.abs(k)<0.001) break;
-		    
-		    if(Tw>100 || Tw < 0){
-		        Tw = Double.NaN;
-		        break;
-		    }
-		    
-		    if(k<0){
-		        if(move<0) lmd = lmd/2;
-		        move = lmd;
-		    }else{
-		        if(move>0) lmd = lmd/2;
-		        move = -lmd;
-		    }		    
-		    Tw = Tw + move;
-		}
-		this.Tw = Tw;
+		this.Psyc_B_Td_Pw(B, Td, Pw);
 	}
 	
 	public void Psyc_B_Td_Pw(double B, double Td, double Pw){ // Unit kPa , deg C, in % 
@@ -134,6 +111,7 @@ public class PsycState {
 	
 	public void AddDryHeat(double heat){ // kJ heat per kg of da
 		double Pw = this.VapPressure();
+		//TODO: Discuss with sir that what all things are constant on dry heat addition. 
 		this.Td = this.Td + (heat/(1.005 + this.MoistCont()*1.883));
 				
 		this.Psyc_B_Td_Pw(B, Td, Pw);
