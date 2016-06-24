@@ -28,7 +28,8 @@ public class PsycState {
 		this.B = B;
 	}
 	
-	//other constructors for empty class
+
+	/*----------Constructors for empty class----------*/
 	
 	public void Psyc_B_Td_RH(double B, double Td, double RH){ // Unit kPa , deg C, in % 
 		//TODO: discuss with sir about Humidity
@@ -111,10 +112,29 @@ public class PsycState {
 	
 	public void AddDryHeat(double heat){ // kJ heat per kg of da
 		double Pw = this.VapPressure();
+		
 		//TODO: Discuss with sir that what all things are constant on dry heat addition. 
 		this.Td = this.Td + (heat/(1.005 + this.MoistCont()*1.883));
 				
 		this.Psyc_B_Td_Pw(B, Td, Pw);
+	}
+	
+	
+	public double AddDryHeatTill(double Td){ // kJ heat per kg of da
+		double Pw = this.VapPressure();
+		double Enth = this.Enthalpy(); // Initial Enthalpy of System
+		
+		//TODO: Discuss with sir that what all things are constant on dry heat addition. 
+		//this.Td = this.Td + (heat/(1.005 + this.MoistCont()*1.883));
+		if (Td<=this.DuePoint()){
+			this.Td = Td;
+			this.Tw = Td;
+		}else{
+			this.Psyc_B_Td_Pw(B, Td, Pw);
+		}
+		
+		return(this.Enthalpy() - Enth);
+		
 	}
 	
 	// methods for testing
