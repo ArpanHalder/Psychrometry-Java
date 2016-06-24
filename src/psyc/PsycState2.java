@@ -5,7 +5,7 @@ import java.lang.Math;
 public class PsycState2 {
 
 	double Td;
-	double Tw;
+	//double Tw;
 	double B;
 	double Pw;
 	// TODO:: Add Vapor pressure as state descriptor. 
@@ -13,21 +13,14 @@ public class PsycState2 {
 	public PsycState2(){
 		// Empty constructor
 		this.Td = 0;
-		this.Tw = 0;
+		//this.Tw = 0;
 		this.B = 0;
 		this.Pw = 0;
 	}
 	
-	public PsycState2(double Td, double Tw){//inputs in degree C
+	public PsycState2(double B, double Td, double Pw){ // inputs in degree C and kPa
 		this.Td = Td;
-		this.Tw = Tw;
-		this.B = 101.325;
-		this.Pw = this.VapPressure();
-	}
-	
-	public PsycState2(double Td, double Tw, double B){ // inputs in degree C and kPa
-		this.Td = Td;
-		this.Tw = Tw;
+		//this.Tw = Tw;
 		this.B = B;
 		this.Pw = this.VapPressure();
 	}
@@ -74,6 +67,12 @@ public class PsycState2 {
 	public double VapPressure(){
 		// Gives Partial Vapor Pressure (kPa) Tdb, Twb (*C)Barpmetric_Pressure (kPa)
 		return( this.SatVapPressure() - 0.000644*this.B*(Td - Tw));
+
+	}
+	
+	public double PartialVapPressure(){
+		// Gives Partial Vapor Pressure (kPa) Tdb, Twb (*C)Barpmetric_Pressure (kPa)
+		return(this.Pw);
 
 	}
 	public double SatVapPressure(){ // Saturated Vapor pressure
