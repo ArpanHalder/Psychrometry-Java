@@ -95,6 +95,10 @@ public class PsycState {
 		return(1.005*Td + this.MoistCont()*(1.883*Td+2500));
 	}
 	
+	public double Enthalpy(double T){ // Enthalpy in kJ / kg of da
+		return(1.005*T + this.MoistCont()*(1.883*T+2500));
+	}
+	
 	public double SigmaHeat(){
 		return(this.Enthalpy() - 4.18*this.MoistCont()*Tw);
 	}
@@ -118,9 +122,32 @@ public class PsycState {
 		
 		//TODO: Discuss with sir that what all things are constant on dry heat addition. 
 		double Td = this.Td + (heat/(1.005 + this.MoistCont()*1.883));
-		if (Td< this.DuePoint()){
-			//TODO: Raise a Notification.
-		}		
+		if (Td <= this.DuePoint()){
+			//TODO: Raise a Notification that condensation has occurred.
+			double Ent2 = this.Enthalpy()+heat, temp ;
+			int iter = 0;
+			while(true){
+			    iter = iter+1; // for later advance uses
+			    
+			    temp = ;
+			    if (Math.abs(temp)<0.001) break;
+			    
+			    if(Tw>T_Max || Tw < T_Min){
+			    	// TODO: Raise an Error / Exception
+			        Tw = Double.NaN;
+			        break;
+			    }
+			    
+			    if(k<0){
+			        if(move<0) lmd = lmd/2;
+			        move = lmd;
+			    }else{
+			        if(move>0) lmd = lmd/2;
+			        move = -lmd;
+			    }		    
+			    Tw = Tw + move;
+			}
+		}else		
 		this.Psyc_B_Td_Pw(B, Td, Pw);
 	}
 	
@@ -132,6 +159,7 @@ public class PsycState {
 		//TODO: Discuss with sir that what all things are constant on dry heat addition. 
 		//this.Td = this.Td + (heat/(1.005 + this.MoistCont()*1.883));
 		if (Td<=this.DuePoint()){
+			//TODO: Rais a notification of condensation. 
 			this.Td = Td;
 			this.Tw = Td;
 		}else{
