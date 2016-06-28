@@ -2,16 +2,19 @@ package psyc;
 
 import java.lang.Math;
 
+/**
+ * @author arpan
+ *
+ */
 public class PsycState {
 	
-	public enum Day {
-	    SUNDAY, MONDAY, TUESDAY, WEDNESDAY,
-	    THURSDAY, FRIDAY, SATURDAY 
-	}
+	
 
-	private static final double T_Max = 80, T_Min = -15, B_Max = 1000, B_Min = 10;
-	// TODO: Error / Constancy check to be implemented.
-	public static final int TD_TW_B = 0, B_TD_RH = 1;
+	/**
+	 * Limits for the descriptors
+	 */
+	private static final double T_Max = 80, T_Min = -15, B_Max = 1000, B_Min = 10, En_Max = 120, En_Min = 10;
+	// TODO: Error / Constancy check to be implemented. 
 	double Td;
 	double Tw;
 	double B;
@@ -24,33 +27,65 @@ public class PsycState {
 		this.B = 0;
 	}
 	
+	/**
+	 * @param Td Dry Bulb Temparature in C
+	 * @param Tw Wet Bulb Temp in C
+	 */
 	public PsycState(double Td, double Tw){//inputs in degree C
 		this.Td = Td;
 		this.Tw = Tw;
 		this.B = 101.325;
 	}
 	
+	/**
+	 * @param Td
+	 * @param Tw
+	 * @param B
+	 */
 	public PsycState(double Td, double Tw, double B){ // inputs in degree C and kPa
 		this.Td = Td;
 		this.Tw = Tw;
 		this.B = B;
 	}
 	
-	public PsycState(int type, double B, double Td, double RH){
-		// Const Tyoe shall be used in later prototypes
-		if(type == B_TD_RH)
-		this.Psyc_B_Td_RH(B, Td, RH);
+	/**
+	 * @author arpan
+	 *
+	 */
+	public enum ConsType{ // Constructor type enumerator
+		Td_Tw_B, RH_Td_B;
+	}
+	
+	/**
+	 * @param type
+	 * @param RH
+	 * @param Td
+	 * @param B
+	 */
+	public PsycState(ConsType type,double RH, double Td,double B){ // inputs in degree C and kPa
+		if(type == ConsType.RH_Td_B)
+			this.Psyc_RH_Td_B(RH, Td, B);
 	}
 
 	/*----------Constructors for empty class----------*/
 	
-	public void Psyc_B_Td_RH(double B, double Td, double RH){ // Unit kPa , deg C, in % 
+	/**
+	 * @param RH humidity in percentage scale
+	 * @param Td Dry Bulb Temparature
+	 * @param B Barometric Pressure
+	 */
+	public void Psyc_RH_Td_B(double RH, double Td,double B){ // Unit kPa , deg C, in % 
 		//TODO: discuss with sir about Humidity
 		double Pw = this.SatVapPressure(Td) * RH/100;
-		this.Psyc_B_Td_Pw(B, Td, Pw);
+		this.Psyc_Pw_Td_B(Pw, Td, B);
 	}
 	
-	public void Psyc_B_Td_Pw(double B, double Td, double Pw){ // Unit kPa , deg C, in % 
+	/**
+	 * @param Pw
+	 * @param Td
+	 * @param B
+	 */
+	public void Psyc_Pw_Td_B(double Pw, double Td, double B){ // Unit kPa , deg C, in % 
 		this.Td = Td;
 		this.B = B;
 		int iter=0;
@@ -81,15 +116,25 @@ public class PsycState {
 	
 	// Get data Methods
 	
+	/**
+	 * @return The Vapor Pressure of Psychrometric state
+	 */
 	public double VapPressure(){
 		// Gives Partial Vapor Pressure (kPa) Tdb, Twb (*C)Barpmetric_Pressure (kPa)
 		return( this.SatVapPressure() - 0.000644*this.B*(Td - Tw));
 
 	}
+	/**
+	 * @return Saturated Vapor Pressure 
+	 */
 	public double SatVapPressure(){ // Saturated Vapor pressure
 		return(0.6105*Math.exp(17.27 * Tw / (237.3+ Tw)));
 	}
 	//Overloading
+	/**
+	 * @param T Temparature in C 
+	 * @return Saturated Vapor Pressure for Temperature T
+	 */
 	public double SatVapPressure(double T){ // Saturated Vapor pressure for temperature in call by value
 		return(0.6105*Math.exp(17.27 * T / (237.3+ T)));
 	}
@@ -124,19 +169,39 @@ public class PsycState {
 	
 	// Methods involving state change
 	
-	public void AddDryHeat(double heat){ // kJ heat per kg of da
+	public void DryHeat(double heat){ // kJ heat per kg of da
 		double Pw = this.VapPressure();
-		
+		if (this.Enthalpy()+heat<En_Min || this.Enthalpy()+heat>En_Max){
+			//TODO: raise error
+		}
 		//TODO: Discuss with sir that what all things are constant on dry heat addition. 
 		double Td = this.Td + (heat/(1.005 + this.MoistCont()*1.883));
 		if (Td< this.DuePoint()){
 			//TODO: Raise a Notification.
-		}		
-		this.Psyc_B_Td_Pw(B, Td, Pw);
+			double targetE = this.Enthalpy()+heat;
+			double lmd = 5, move =0;
+			this.Td = this.DuePoint();
+			this.Tw = this.Td;
+			while(true){
+				double k = targetE-this.Enthalpy();
+				if(Math.abs(k)<0.01) break;
+				if(k>0){
+			        if(move<0) lmd = lmd/2;
+			        move = lmd;
+			    }else{
+			        if(move>0) lmd = lmd/2;
+			        move = -lmd;
+			    }
+				this.Tw = this.Td = this.Td + move;
+			}
+			
+			
+		}else		
+		this.Psyc_Pw_Td_B(Pw, Td, Td);
 	}
 	
 	
-	public double AddDryHeatTill(double Td){ // kJ heat per kg of da
+	public double DryHeatTill(double Td){ // kJ heat per kg of da
 		double Pw = this.VapPressure();
 		double Enth = this.Enthalpy(); // Initial Enthalpy of System
 		
@@ -146,7 +211,7 @@ public class PsycState {
 			this.Td = Td;
 			this.Tw = Td;
 		}else{
-			this.Psyc_B_Td_Pw(B, Td, Pw);
+			this.Psyc_Pw_Td_B(Pw, Td, B);
 		}
 		
 		return(this.Enthalpy() - Enth);

@@ -6,7 +6,7 @@ public class test {
 		
 		PsycState Psmtry = new PsycState(25,21.5);
 		//Psmtry.Psyc_B_Td_RH(101.325, 30, 66.964);
-		Psmtry.AddDryHeat(20);
+		Psmtry.DryHeat(-50);
 		Psmtry.Print();
 
 	}

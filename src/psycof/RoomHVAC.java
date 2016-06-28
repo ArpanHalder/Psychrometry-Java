@@ -21,9 +21,16 @@ public class RoomHVAC extends PsycState{
 	
 	public RoomHVAC(int type,  double vol, double B, double Td, double RH) {
 		// TODO Auto-generated constructor stub]
-		super(PsycState.B_TD_RH,B,Td,RH);
+		super(PsycState.ConsType.RH_Td_B,RH,Td,B);
 		this.RoomVolume = vol;
 	}
+	
+	public double TotalAirMass(){
+		return(super.Density()*this.RoomVolume);
+	}
+	
+	
+	
 		
 }
 
