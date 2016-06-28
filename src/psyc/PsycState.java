@@ -14,7 +14,7 @@ public class PsycState {
 	 * Limits for the descriptors
 	 */
 	private static final double T_Max = 80, T_Min = -15, B_Max = 1000, B_Min = 10, En_Max = 120, En_Min = 10;
-	// TODO: Error / Constancy check to be implemented. 
+	// TODO: Error / Constancy check to be implemented. Sastry sir for low temparature.
 	double Td;
 	double Tw;
 	double B;
@@ -174,7 +174,7 @@ public class PsycState {
 		if (this.Enthalpy()+heat<En_Min || this.Enthalpy()+heat>En_Max){
 			//TODO: raise error
 		}
-		//TODO: Discuss with sir that what all things are constant on dry heat addition. 
+		//TODO: Discuss with sir that what all things are constant on dry heat addition. also a inverse equation. 
 		double Td = this.Td + (heat/(1.005 + this.MoistCont()*1.883));
 		if (Td< this.DuePoint()){
 			//TODO: Raise a Notification.
