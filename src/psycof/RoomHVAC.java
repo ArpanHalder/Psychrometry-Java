@@ -4,14 +4,13 @@ import psyc.PsycState;
 
 public class RoomHVAC extends PsycState{
 	
+	public static final int VOL_TD_TW_B = 0, VOL_B_TD_RH = 1;
 	double RoomVolume; 
 	
-	public enum ConsType {
-	    VOL_TD_TW_B, VOL_B_TD_RH;
-	}
 
 	public RoomHVAC() {
 		// TODO Auto-generated constructor stub
+		this.RoomVolume = 0;
 	}
 	
 	public RoomHVAC(double vol, double Td, double Tw, double B) {
@@ -20,14 +19,12 @@ public class RoomHVAC extends PsycState{
 		this.RoomVolume = vol;
 	}
 	
-	public RoomHVAC(int type,  double vol, double Td, double B, double RH) {
+	public RoomHVAC(int type,  double vol, double B, double Td, double RH) {
 		// TODO Auto-generated constructor stub]
-			super();
-			super.Psyc_B_Td_RH(B, Td, RH);
-			this.RoomVolume = vol;
-		}
-		
+		super(PsycState.B_TD_RH,B,Td,RH);
+		this.RoomVolume = vol;
 	}
-
-
+		
 }
+
+

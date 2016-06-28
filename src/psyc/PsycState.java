@@ -4,17 +4,18 @@ import java.lang.Math;
 
 public class PsycState {
 	
-	public enum ConsType {
-	    TD_TW_B, TD_B_HR, B_TD_RH;
+	public enum Day {
+	    SUNDAY, MONDAY, TUESDAY, WEDNESDAY,
+	    THURSDAY, FRIDAY, SATURDAY 
 	}
-	
+
 	private static final double T_Max = 80, T_Min = -15, B_Max = 1000, B_Min = 10;
-	// TODO: Error / Constancy check to be implemented. 
+	// TODO: Error / Constancy check to be implemented.
+	public static final int TD_TW_B = 0, B_TD_RH = 1;
 	double Td;
 	double Tw;
 	double B;
 	// TODO:: Add Vapor pressure as state descriptor. 
-	
 	
 	public PsycState(){
 		// Empty constructor
@@ -35,9 +36,9 @@ public class PsycState {
 		this.B = B;
 	}
 	
-	public PsycState(ConsType type, double B, double Td, double RH){
+	public PsycState(int type, double B, double Td, double RH){
 		// Const Tyoe shall be used in later prototypes
-		if(type == ConsType.B_TD_RH)
+		if(type == B_TD_RH)
 		this.Psyc_B_Td_RH(B, Td, RH);
 	}
 
