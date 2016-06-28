@@ -4,7 +4,7 @@ import java.lang.Math;
 
 public class PsycState {
 
-	private static final double T_Max = 80, T_Min = -15, B_Max = 1000, B_Min = 10;
+	private static final double T_Max = 80, T_Min = -15, B_Max = 1000, B_Min = 10, En_Max = 120, En_Min = 10;
 	// TODO: Error / Constancy check to be implemented. 
 	double Td;
 	double Tw;
@@ -113,19 +113,39 @@ public class PsycState {
 	
 	// Methods involving state change
 	
-	public void AddDryHeat(double heat){ // kJ heat per kg of da
+	public void DryHeat(double heat){ // kJ heat per kg of da
 		double Pw = this.VapPressure();
-		
+		if (this.Enthalpy()+heat<En_Min || this.Enthalpy()+heat>En_Max){
+			//TODO: raise error
+		}
 		//TODO: Discuss with sir that what all things are constant on dry heat addition. 
 		double Td = this.Td + (heat/(1.005 + this.MoistCont()*1.883));
 		if (Td< this.DuePoint()){
 			//TODO: Raise a Notification.
-		}		
+			double targetE = this.Enthalpy()+heat;
+			double lmd = 5, move =0;
+			this.Td = this.DuePoint();
+			this.Tw = this.Td;
+			while(true){
+				double k = targetE-this.Enthalpy();
+				if(Math.abs(k)<0.01) break;
+				if(k>0){
+			        if(move<0) lmd = lmd/2;
+			        move = lmd;
+			    }else{
+			        if(move>0) lmd = lmd/2;
+			        move = -lmd;
+			    }
+				this.Tw = this.Td = this.Td + move;
+			}
+			
+			
+		}else		
 		this.Psyc_B_Td_Pw(B, Td, Pw);
 	}
 	
 	
-	public double AddDryHeatTill(double Td){ // kJ heat per kg of da
+	public double DryHeatTill(double Td){ // kJ heat per kg of da
 		double Pw = this.VapPressure();
 		double Enth = this.Enthalpy(); // Initial Enthalpy of System
 		
