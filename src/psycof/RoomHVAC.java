@@ -19,18 +19,57 @@ public class RoomHVAC extends PsycState{
 		this.RoomVolume = vol;
 	}
 	
-	public RoomHVAC(int type,  double vol, double B, double Td, double RH) {
-		// TODO Auto-generated constructor stub]
-		super(PsycState.ConsType.RH_Td_B,RH,Td,B);
-		this.RoomVolume = vol;
+	public enum ConsType{
+		Vol_RH_Td_B,
+		Vol_Td_Tw_B;
 	}
 	
+	public RoomHVAC(ConsType type,  double vol, double RH, double Td, double B) {
+		// TODO Auto-generated constructor stub]
+		if(type == ConsType.Vol_RH_Td_B){
+			super.Psyc_RH_Td_B(RH, Td, B);
+			this.RoomVolume = vol;
+		}if(type == ConsType.Vol_Td_Tw_B){
+			super.Psyc_Td_Tw_B(RH, Td, B);
+			this.RoomVolume = vol;
+		}
+		
+	}
+	
+	public double RoomVolume(){
+		return this.RoomVolume;
+	}
 	public double TotalAirMass(){
 		return(super.Density()*this.RoomVolume);
 	}
 	
+	public double TotalDryAirMass(){
+		return(this.RoomVolume/super.SpecificVol());
+	}
 	
+	public double TotalEnthalpy(){
+		return(this.TotalDryAirMass()*super.Enthalpy());
+	}
 	
+	public void DryHeat(double heat){
+		super.DryHeat(heat/this.TotalDryAirMass());
+	}
+	
+	public double DryHeatTill(double Td){
+		return(super.DryHeatTill(Td)*this.TotalDryAirMass());
+	}
+	
+	public double Humidity(){
+		return(super.Humidity());
+	}
+	
+	public double DuePoint(){
+		return(super.DuePoint());
+	}
+	
+	public double Density(){
+		return(super.Density());
+	}
 		
 }
 

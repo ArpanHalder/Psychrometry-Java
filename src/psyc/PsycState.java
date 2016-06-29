@@ -52,22 +52,16 @@ public class PsycState {
 	 * @author arpan
 	 *
 	 */
-	public enum ConsType{ // Constructor type enumerator
-		Td_Tw_B, RH_Td_B;
-	}
-	
-	/**
-	 * @param type
-	 * @param RH
-	 * @param Td
-	 * @param B
-	 */
-	public PsycState(ConsType type,double RH, double Td,double B){ // inputs in degree C and kPa
-		if(type == ConsType.RH_Td_B)
-			this.Psyc_RH_Td_B(RH, Td, B);
-	}
 
 	/*----------Constructors for empty class----------*/
+	
+	
+	public void Psyc_Td_Tw_B(double Td, double Tw, double B){ // inputs in degree C and kPa
+		this.Td = Td;
+		this.Tw = Tw;
+		this.B = B;
+	}
+	
 	
 	/**
 	 * @param RH humidity in percentage scale
@@ -114,11 +108,31 @@ public class PsycState {
 		this.Tw = Tw;
 	}
 	
+	
+	// TODO: Check State method for alternative constructors
+	
+	
+	
+	
+	
 	// Get data Methods
 	
 	/**
 	 * @return The Vapor Pressure of Psychrometric state
 	 */
+	
+	public double DryBulbTemp(){
+		return this.Td;
+	}
+	
+	public double WetBulbTemp(){
+		return this.Tw;
+	}
+	
+	public double BaroPressure(){
+		return this.B;
+	}
+	
 	public double VapPressure(){
 		// Gives Partial Vapor Pressure (kPa) Tdb, Twb (*C)Barpmetric_Pressure (kPa)
 		return( this.SatVapPressure() - 0.000644*this.B*(Td - Tw));
@@ -132,7 +146,7 @@ public class PsycState {
 	}
 	//Overloading
 	/**
-	 * @param T Temparature in C 
+	 * @param T Temperature in C 
 	 * @return Saturated Vapor Pressure for Temperature T
 	 */
 	public double SatVapPressure(double T){ // Saturated Vapor pressure for temperature in call by value
