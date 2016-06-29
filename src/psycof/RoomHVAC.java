@@ -4,10 +4,9 @@ import psyc.PsycState;
 
 public class RoomHVAC extends PsycState{
 	
-	public static final int VOL_TD_TW_B = 0, VOL_B_TD_RH = 1;
 	double RoomVolume; 
 	
-
+	
 	public RoomHVAC() {
 		// TODO Auto-generated constructor stub
 		this.RoomVolume = 0;
