@@ -65,7 +65,7 @@ public class PsycState {
 	
 	/**
 	 * @param RH humidity in percentage scale
-	 * @param Td Dry Bulb Temparature
+	 * @param Td Dry Bulb Temperature
 	 * @param B Barometric Pressure
 	 */
 	public void Psyc_RH_Td_B(double RH, double Td,double B){ // Unit kPa , deg C, in % 
@@ -106,6 +106,32 @@ public class PsycState {
 		    Tw = Tw + move;
 		}
 		this.Tw = Tw;
+	}
+	
+	public void SatPsycEnth(double targetE){
+		SatPsycEnth(targetE,25); // Default initial seed of 25 degree C
+	}
+	
+	public void SatPsycEnth(double targetE, double T){
+		
+		this.Td = this.Tw = T;
+		double lmd = 5, move =0;
+		int iter = 0;	
+			while(true){
+				iter = iter+1;
+				double k = targetE-this.Enthalpy();
+				if(Math.abs(k)<0.001) break;
+				if(k>0){
+			        if(move<0) lmd = lmd/2;
+			        move = lmd;
+			    }else{
+			        if(move>0) lmd = lmd/2;
+			        move = -lmd;
+			    }
+				this.Tw = this.Td = this.Td + move;
+			}
+		
+		
 	}
 	
 	
@@ -235,7 +261,7 @@ public class PsycState {
 	// methods for testing
 	
 	public void Print(){
-		System.out.printf("Dry Bulb = %f, Wet Bulb = %f \nBarometric Pressure = %f\n",Td,Tw,B);
+		System.out.printf("\nDry Bulb = %f, Wet Bulb = %f \nBarometric Pressure = %f\n",Td,Tw,B);
 		System.out.printf("\nVapor Pressure = %f", this.VapPressure());
 		System.out.printf("\nSaturated Vapor Pressure = %f", this.SatVapPressure());
 		System.out.printf("\nHumity = %f percent", this.Humidity());
