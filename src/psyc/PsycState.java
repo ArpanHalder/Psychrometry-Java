@@ -119,7 +119,7 @@ public class PsycState {
 		int iter = 0;	
 			while(true){
 				iter = iter+1;
-				double k = targetE-this.Enthalpy();
+				double k = targetE-this.EnthalpyPerKgDa();
 				if(Math.abs(k)<0.001) break;
 				if(k>0){
 			        if(move<0) lmd = lmd/2;
@@ -179,7 +179,7 @@ public class PsycState {
 		return(0.6105*Math.exp(17.27 * T / (237.3+ T)));
 	}
 	
-	public double MoistCont(){ // kg of vapor per kg of da
+	public double MoistContPerKgDa(){ // kg of vapor per kg of da
 		return (0.622*this.VapPressure())/(B - this.VapPressure());
 	}
 	
@@ -187,12 +187,12 @@ public class PsycState {
 		return (0.287 * (273.15 + Td))/ (B - this.VapPressure());
 	}
 	
-	public double Enthalpy(){ // Enthalpy in kJ / kg of da
-		return(1.005*Td + this.MoistCont()*(1.883*Td+2500));
+	public double EnthalpyPerKgDa(){ // Enthalpy in kJ / kg of da
+		return(1.005*Td + this.MoistContPerKgDa()*(1.883*Td+2500));
 	}
 	
-	public double SigmaHeat(){
-		return(this.Enthalpy() - 4.18*this.MoistCont()*Tw);
+	public double SigmaHeatPerKgDa(){
+		return(this.EnthalpyPerKgDa() - 4.18*this.MoistContPerKgDa()*Tw);
 	}
 	
 	public double Humidity(){
@@ -204,26 +204,26 @@ public class PsycState {
 	}
 	
 	public double Density(){
-		return((1+this.MoistCont())/this.SpecificVol());
+		return((1+this.MoistContPerKgDa())/this.SpecificVol());
 	}
 	
 	// Methods involving state change
 	
-	public void DryHeat(double heat){ // kJ heat per kg of da
+	public void DryHeatPerKgDa(double heat){ // kJ heat per kg of da
 		double Pw = this.VapPressure();
-		if (this.Enthalpy()+heat<En_Min || this.Enthalpy()+heat>En_Max){
+		if (this.EnthalpyPerKgDa()+heat<En_Min || this.EnthalpyPerKgDa()+heat>En_Max){
 			//TODO: raise error
 		}
 		//TODO: Discuss with sir that what all things are constant on dry heat addition. also a inverse equation. 
-		double Td = this.Td + (heat/(1.005 + this.MoistCont()*1.883));
+		double Td = this.Td + (heat/(1.005 + this.MoistContPerKgDa()*1.883));
 		if (Td< this.DuePoint()){
 			//TODO: Raise a Notification.
-			double targetE = this.Enthalpy()+heat;
+			double targetE = this.EnthalpyPerKgDa()+heat;
 			double lmd = 5, move =0;
 			this.Td = this.DuePoint();
 			this.Tw = this.Td;
 			while(true){
-				double k = targetE-this.Enthalpy();
+				double k = targetE-this.EnthalpyPerKgDa();
 				if(Math.abs(k)<0.01) break;
 				if(k>0){
 			        if(move<0) lmd = lmd/2;
@@ -241,12 +241,12 @@ public class PsycState {
 	}
 	
 	
-	public double DryHeatTill(double Td){ // kJ heat per kg of da
+	public double DryHeatPerKgDaTill(double Td){ // kJ heat per kg of da
 		double Pw = this.VapPressure();
-		double Enth = this.Enthalpy(); // Initial Enthalpy of System
+		double Enth = this.EnthalpyPerKgDa(); // Initial Enthalpy of System
 		
 		//TODO: Discuss with sir that what all things are constant on dry heat addition. 
-		//this.Td = this.Td + (heat/(1.005 + this.MoistCont()*1.883));
+		//this.Td = this.Td + (heat/(1.005 + this.MoistContPerKgDa()*1.883));
 		if (Td<=this.DuePoint()){
 			this.Td = Td;
 			this.Tw = Td;
@@ -254,9 +254,10 @@ public class PsycState {
 			this.Psyc_Pw_Td_B(Pw, Td, B);
 		}
 		
-		return(this.Enthalpy() - Enth);
+		return(this.EnthalpyPerKgDa() - Enth);
 		
 	}
+	
 	
 	// methods for testing
 	
@@ -267,9 +268,9 @@ public class PsycState {
 		System.out.printf("\nHumity = %f percent", this.Humidity());
 		System.out.printf("\nSpecific Volume = %f", this.SpecificVol());
 		System.out.printf("\nDensity = %f", this.Density());
-		System.out.printf("\nEnthalpy = %f", this.Enthalpy());
-		System.out.printf("\nSigma Heat = %f", this.SigmaHeat());
-		System.out.printf("\nMoist Content = %f", this.MoistCont());
+		System.out.printf("\nEnthalpy = %f", this.EnthalpyPerKgDa());
+		System.out.printf("\nSigma Heat = %f", this.SigmaHeatPerKgDa());
+		System.out.printf("\nMoist Content = %f", this.MoistContPerKgDa());
 		System.out.printf("\nDue Point = %f", this.DuePoint());
 	}
 

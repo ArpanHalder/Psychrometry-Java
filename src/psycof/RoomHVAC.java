@@ -47,18 +47,18 @@ public class RoomHVAC extends PsycState{
 	}
 	
 	public double TotalEnthalpy(){
-		return(this.TotalDryAirMass()*super.Enthalpy());
+		return(this.TotalDryAirMass()*super.EnthalpyPerKgDa());
 	}
 	
-	public void DryHeat(double heat){
-		super.DryHeat(heat/this.TotalDryAirMass());
+	public void DryHeatRoom(double heat){
+		super.DryHeatPerKgDa(heat/this.TotalDryAirMass());
 	}
 	
-	public double DryHeatTill(double Td){
-		return(super.DryHeatTill(Td)*this.TotalDryAirMass());
+	public double DryHeatRoomTill(double Td){
+		return(super.DryHeatPerKgDaTill(Td)*this.TotalDryAirMass());
 	}
 	
-	public double Humidity(){
+	/*public double Humidity(){
 		return(super.Humidity());
 	}
 	
@@ -68,7 +68,7 @@ public class RoomHVAC extends PsycState{
 	
 	public double Density(){
 		return(super.Density());
-	}
+	}*/
 		
 }
 

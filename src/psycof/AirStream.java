@@ -46,7 +46,7 @@ public class AirStream extends PsycState{
 		//TODO: if the pressure of two streams are too different then raise an error.
 		double B = S1.BaroPressure();
 		double flow = S1.AirFlow + S2.AirFlow;
-		double Enth = (S1.Enthalpy()*S1.AirFlow + S2.Enthalpy()*S2.AirFlow);
+		double Enth = (S1.EnthalpyPerKgDa()*S1.AirFlow + S2.EnthalpyPerKgDa()*S2.AirFlow);
 		double Pw = (S1.VapPressure()*S1.AirFlow+S2.VapPressure()*S2.AirFlow)/flow;
 		double Td = (S1.DryBulbTemp()*S1.AirFlow+S2.DryBulbTemp()*S2.AirFlow)/flow;
 		
