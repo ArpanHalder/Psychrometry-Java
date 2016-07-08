@@ -14,7 +14,7 @@ public class PsycState {
 	 * Limits for the descriptors
 	 */
 	private static final double T_Max = 80, T_Min = -15, B_Max = 1000, B_Min = 10, En_Max = 120, En_Min = 10;
-	// TODO: Error / Constancy check to be implemented. Sastry sir for low temparature.
+	// TODO: Error / Constancy check to be implemented. Sastry sir for low temperature.
 	double Td;
 	double Tw;
 	double B;
@@ -28,7 +28,7 @@ public class PsycState {
 	}
 	
 	/**
-	 * @param Td Dry Bulb Temparature in C
+	 * @param Td Dry Bulb Temperature in C
 	 * @param Tw Wet Bulb Temp in C
 	 */
 	public PsycState(double Td, double Tw){//inputs in degree C
@@ -38,9 +38,9 @@ public class PsycState {
 	}
 	
 	/**
-	 * @param Td
-	 * @param Tw
-	 * @param B
+	 * @param Td Dry Bulb Temperature in C
+	 * @param Tw Wet Bulb Temparature in C
+	 * @param B Barometric Pressure in kPa
 	 */
 	public PsycState(double Td, double Tw, double B){ // inputs in degree C and kPa
 		this.Td = Td;
@@ -134,8 +134,17 @@ public class PsycState {
 		
 	}
 	
+	/*Methods of Units Conversions*/
 	
-	// TODO: Check State method for alternative constructors
+	public double kPa_to_mmHg(double P_in_kPa){
+		return P_in_kPa * 7.50062;
+	}
+	
+	public double mmHg_to_kPa (double P_in_mmHg){
+		return P_in_mmHg/7.50062;
+	}
+	
+	// TODO: Conversion for Temperature
 	
 	
 	
@@ -159,10 +168,19 @@ public class PsycState {
 		return this.B;
 	}
 	
+	public double BaroPressure_mmHg(){
+		return this.B*7.50062;
+	}
+	
+	
 	public double VapPressure(){
 		// Gives Partial Vapor Pressure (kPa) Tdb, Twb (*C)Barpmetric_Pressure (kPa)
 		return( this.SatVapPressure() - 0.000644*this.B*(Td - Tw));
 
+	}
+	
+	public double VapPressure_mmHg(){
+		return 7.50062*this.VapPressure();
 	}
 	/**
 	 * @return Saturated Vapor Pressure 

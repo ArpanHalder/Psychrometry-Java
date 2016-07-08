@@ -5,7 +5,7 @@ public class test {
 	public static void main(String[] args) {
 		// TODO: Auto-generated method stub
 		
-		PsycState Psmtry = new PsycState(25,21.5);
+		//PsycState Psmtry = new PsycState(25,21.5);
 		//Psmtry.DryHeat(-50);
 		//Psmtry.SatPsycEnth(30);
 		//Psmtry.Print();
