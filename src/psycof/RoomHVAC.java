@@ -54,8 +54,12 @@ public class RoomHVAC extends PsycState{
 		super.DryHeatPerKgDa(heat/this.TotalDryAirMass());
 	}
 	
-	public double DryHeatRoomTill(double Td){
-		return(super.DryHeatPerKgDaTill(Td)*this.TotalDryAirMass());
+	public double DryHeatRoomTill_Td(double Td){
+		return(super.DryHeatPerKgDaTill_Td(Td)*this.TotalDryAirMass());
+	}
+	
+	public double DryHeatRoomTill_Tw(double Tw){
+		return(super.DryHeatPerKgDaTill_Tw(Tw)*this.TotalDryAirMass());
 	}
 	
 	/*public double Humidity(){

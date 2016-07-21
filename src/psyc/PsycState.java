@@ -74,6 +74,13 @@ public class PsycState {
 		this.Psyc_Pw_Td_B(Pw, Td, B);
 	}
 	
+	public void Psyc_Pw_Tw_B(double Pw, double Tw, double B){
+		this.B = B;
+		double Pws = this.SatVapPressure(Tw);
+		this.Td = (Pws - Pw)/(0.000644*this.B) + Tw;
+		this.Tw = Tw;
+	}
+	
 	/**
 	 * @param Pw
 	 * @param Td
@@ -255,11 +262,11 @@ public class PsycState {
 			
 			
 		}else		
-		this.Psyc_Pw_Td_B(Pw, Td, Td);
+		this.Psyc_Pw_Td_B(Pw, Td, B);
 	}
 	
 	
-	public double DryHeatPerKgDaTill(double Td){ // kJ heat per kg of da
+	public double DryHeatPerKgDaTill_Td(double Td){ // kJ heat per kg of da
 		double Pw = this.VapPressure();
 		double Enth = this.EnthalpyPerKgDa(); // Initial Enthalpy of System
 		
@@ -276,6 +283,22 @@ public class PsycState {
 		
 	}
 	
+	public double DryHeatPerKgDaTill_Tw(double Tw){ // kJ heat per kg of da
+		double Pw = this.VapPressure();
+		double Enth = this.EnthalpyPerKgDa(); // Initial Enthalpy of System
+		
+		//TODO: Discuss with sir that what all things are constant on dry heat addition. 
+		//this.Td = this.Td + (heat/(1.005 + this.MoistContPerKgDa()*1.883));
+		if (Tw<=this.DuePoint()){
+			this.Td = Tw;
+			this.Tw = Tw;
+		}else{
+			this.Psyc_Pw_Tw_B(Pw, Tw, B);
+		}
+		
+		return(this.EnthalpyPerKgDa() - Enth);
+		
+	}
 	
 	// methods for testing
 	
