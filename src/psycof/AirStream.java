@@ -105,11 +105,11 @@ public class AirStream extends PsycState{
 		return super.DryHeatPerKgDaTill_Tw(Tw);
 	}
 	
-	public void Print(){
+	/*public void Print(){
 		
 		System.out.printf("\nFlow Rate (Kgda / s) = %f\n", this.AirFlow);
 		super.Print();
-	}
+	}*/
 	
 	
 	
