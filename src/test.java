@@ -10,11 +10,10 @@ public class test {
 		//Psmtry.SatPsycEnth(30);
 		//Psmtry.Print();
 		
-		AirStream St1 = new AirStream(20,0,0,101.325);
+		AirStream St1 = new AirStream(20,5,0,101.325);
 		AirStream St2 = new AirStream(20,30,30,101.325);
-		AirStream mix = new AirStream();
+		AirStream mix = AirStream.Mix(St1, St2);
 		
-		mix = mix.Mix(St1, St2);
 		
 		mix.Print();
 		

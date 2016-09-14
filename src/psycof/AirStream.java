@@ -71,7 +71,7 @@ public class AirStream extends PsycState{
 		return this.AirFlow*super.SpecificVol();
 	}
 	
-	public AirStream Mix(AirStream S1, AirStream S2){
+	public static AirStream Mix(AirStream S1, AirStream S2){
 		
 		//TODO: if the pressure of two streams are too different then raise an error.
 		double B = S1.BaroPressure();
