@@ -11,7 +11,7 @@ public class test {
 		//Psmtry.Print();
 		
 		AirStream St1 = new AirStream(20,5,0,101.325);
-		AirStream St2 = new AirStream(20,30,30,101.325);
+		AirStream St2 = new AirStream(10,30,30,101.325);
 		AirStream mix = AirStream.Mix(St1, St2);
 		
 		
