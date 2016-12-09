@@ -10,14 +10,13 @@ public class test {
 		//Psmtry.SatPsycEnth(30);
 		//Psmtry.Print();
 		
-		AirStream St1 = new AirStream(20,5,0,101.325);
-		AirStream St2 = new AirStream(10,30,30,101.325);
-		AirStream mix = AirStream.Mix(St1, St2);
+		AirStream Stream_1 = new AirStream(20,5,0,101.325); 
+		// AirStream( Air flow-rate in m^3/s, Dry bulb temp, double Tw, double B)
+		AirStream Stream_2 = new AirStream(10,30,30,101.325);
+		AirStream Mixture_of_Streams = AirStream.Mix(Stream_1, Stream_2);
 		
+		Mixture_of_Streams.Print();
 		
-		mix.Print();
-		
-
 	}
 
 }
