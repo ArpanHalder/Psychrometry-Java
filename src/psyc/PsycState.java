@@ -14,7 +14,7 @@ public class PsycState {
 	 * Limits for the descriptors
 	 */
 	private static final double T_Max = 80, T_Min = -15, B_Max = 1000, B_Min = 10, En_Max = 120, En_Min = 10;
-	// TODO: Error / Constancy check to be implemented. Sastry sir for low temperature.
+	// TODO: Error / Constancy check to be implemented. Discuss with Sastry sir for low temperature limits.
 	double Td;
 	double Tw;
 	double B;
